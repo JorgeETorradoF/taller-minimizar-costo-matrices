@@ -9,5 +9,5 @@ Para ejecutar el script `multiMat.py`, debes utilizar el siguiente comando en te
 ```bash
 python .\multiMat.py .\<nombrearchivoEntrada>
 ```
-Donde <nombrearchivoEntrada> es un archivo de texto con las dimensiones de las matrices, (se adjuntan 5 archivos de ejemplo por si acaso)
+Donde `<nombrearchivoEntrada>` es un archivo de texto con las dimensiones de las matrices, (se adjuntan 5 archivos de ejemplo por si acaso)
 
