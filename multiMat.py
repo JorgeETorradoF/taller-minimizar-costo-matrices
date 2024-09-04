@@ -77,7 +77,7 @@ def mat_mult(A):
         m.append(aux)
     cost = mat_mult_BU(A,0,n,m)
     end = time.perf_counter_ns()
-    print(f'Tiempo total: {(end - init)}')
+    print(f'Tiempo total (ms): {(end - init)}')
     backTrackingMat(m,1,n-1, A)
     return cost
 # end def
@@ -92,6 +92,9 @@ Af = open(sys.argv[1], 'r').readlines()
 A = [int(a) for a in Af][0:]
 
 print('Diagonales de matrices leídas del archivo: \n',A,'\n')
+print("\n=====================================================================================\n")
+print("A continuación se muestran los resultados de la ejecución del algoritmo Bottom up")
+print("\n=====================================================================================\n")
 print('el costo mínimo es: ',mat_mult(A))
 print("Multiplicando matrices en el siguiente orden: ")
 #quedan un paréntesis inicial y final como de relleno, entonces por estética me los bajo
