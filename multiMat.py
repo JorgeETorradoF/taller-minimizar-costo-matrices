@@ -1,42 +1,12 @@
 import sys
 import numpy as np
 import time
+from Memoizado import mult_mat_mem
+from RecursivoInocente import mult_mat_rec
+from BottomUp import mat_mult_BU
 
 pasosMultiMat = []
-#recuerda que b es 0
-def mat_mult_BU(d, b, e, m):
-
-    #La matriz se construye en cuanto a filas de abajo hacia arriba
-
-    for i in range(e-1,b,-1):
-
-        #en columnas desde i hasta n, pues el caso base es i = j lo que significa coste cero
-
-        for j in range(i,e):
-
-            #caso base diagonales (no me cuesta multiplicar una matriz con nada)
-
-            if i == j:
-                m[i][j] = 0
-
-            else:
-
-                #se viene la magia XD
-
-                for k in range(i,j):
-
-                    #se calcula el coste de multiplicar desde i hasta j con una partición intermedia k y se almacena en un temporal
-
-                    aux = m[i][k]+m[k+1][j]+(d[i - 1] * d[k] * d[j])
-
-                    #si el costo temporal es menor a lo que hay actualmente, se sobreescribe, pues estamos minimizando
-
-                    if(aux < m[i][j]):
-                        m[i][j] = aux
-
-    # Retornar la matriz de costos calculada
-    return m[1][e-1]
-
+#función para el backTracking
 def backTrackingMat(m,b,e,d):
     #caso base
     if(b == e):
@@ -64,15 +34,15 @@ def backTrackingMat(m,b,e,d):
             pasosMultiMat.append(")")
     return
 
-#función inicial que dio el profe, no la comento pq mucho texto
-def mat_mult(A):
+#función que se encarga de llamar todo lo del Bottom up
+def llamar_mat_mult_BU(A):
     init = time.perf_counter_ns()
     n = len(A)
     m = []
     #llenamos con ceros
     for i in range(0,n):
         aux = []
-        for i in range(0,n):
+        for j in range(0,n):
             aux.append(float('inf'))
         m.append(aux)
     cost = mat_mult_BU(A,0,n,m)
@@ -80,7 +50,23 @@ def mat_mult(A):
     print(f'Tiempo total (ms): {(end - init)}')
     backTrackingMat(m,1,n-1, A)
     return cost
-# end def
+
+#función inicial que se encarga de llamar todo lo del memoizado
+def llamar_mat_mult_mem(A):
+    init = time.perf_counter_ns()
+    n = len(A)
+    m = []
+    #llenamos con ceros
+    for i in range(0,n):
+        aux = []
+        for j in range(0,n):
+            aux.append(float('inf'))
+        m.append(aux)
+    cost = mult_mat_mem(1, n -1, A, m)
+    end = time.perf_counter_ns()
+    print(f'Tiempo total (ms): {(end - init)}')
+    backTrackingMat(m,1,n-1, A)
+    return cost
 
 ## -------------------------------------------------------------------------
 if len(sys.argv) < 2:
@@ -91,11 +77,26 @@ if len(sys.argv) < 2:
 Af = open(sys.argv[1], 'r').readlines()
 A = [int(a) for a in Af][0:]
 
-print('Diagonales de matrices leídas del archivo: \n',A,'\n')
+#Se viene el memoizado:
+print('\nDiagonales de matrices leídas del archivo: \n',A,'\n')
+print("\n=====================================================================================\n")
+print("A continuación se muestran los resultados de la ejecución del algoritmo memoizado")
+print("\n=====================================================================================\n")
+print('el costo mínimo es: ',llamar_mat_mult_mem(A))
+print("Multiplicando matrices en el siguiente orden: ")
+#quedan un paréntesis inicial y final como de relleno, entonces por estética me los bajo
+del pasosMultiMat[0]
+pasosMultiMat.pop()
+for simbolo in pasosMultiMat:
+    print(simbolo, end="")
+
+#reseteamos pasosMultiMat
+pasosMultiMat = []
+
 print("\n=====================================================================================\n")
 print("A continuación se muestran los resultados de la ejecución del algoritmo Bottom up")
 print("\n=====================================================================================\n")
-print('el costo mínimo es: ',mat_mult(A))
+print('el costo mínimo es: ',llamar_mat_mult_BU(A))
 print("Multiplicando matrices en el siguiente orden: ")
 #quedan un paréntesis inicial y final como de relleno, entonces por estética me los bajo
 del pasosMultiMat[0]
